@@ -1,0 +1,59 @@
+services:
+  api:
+    container_name: lab_evolution_api
+    image: atendai/evolution-api:v2.2.3
+    restart: always
+    ports:
+      - 8081:8080
+    volumes:
+      - lab_evolution_instances:/lab_evolution/instances
+    networks:
+      - lab_evolution
+    env_file:
+      - .env
+
+  postgres:
+    image: postgres:13
+    restart: always
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+    networks:
+      - lab_evolution
+
+  redis:
+    image: redis:alpine
+    restart: always
+    ports:
+      - "6380:6379"
+    networks:
+      - lab_evolution
+
+  n8n:
+    image: n8nio/n8n 
+    container_name: n8n
+    restart: always
+    ports:
+      - "5678:5678" # Porta padrão do n8n
+    volumes:
+      # Volume para persistir os dados e workflows do n8n
+      - n8n_data:/home/node/.n8n
+      - ./workflows:/home/node/.n8n/workflows 
+    networks:
+      # Conectando à mesma rede para que possa se comunicar com a API, se necessário
+      - lab_evolution
+    environment:
+      # Boa prática: definir o fuso horário
+      - TZ=America/Sao_Paulo
+
+volumes:
+  lab_evolution_instances:
+  pg_data:
+  n8n_data:
+
+networks:
+  lab_evolution:
+    driver: bridge
