@@ -1,5 +1,5 @@
 {
-  "name": "My workflow",
+  "name": "CriaInstancia",
   "nodes": [
     {
       "parameters": {
@@ -14,7 +14,7 @@
         0,
         0
       ],
-      "id": "deb40dfe-7663-4c7e-9acf-826123b6f5e1",
+      "id": "647d666b-c9a4-4f7d-bb81-14345ba326eb",
       "name": "Webhook",
       "webhookId": "8195fa6e-1a8e-4256-b531-4a141e99f6d9"
     },
@@ -32,22 +32,8 @@
           ]
         },
         "sendBody": true,
-        "bodyParameters": {
-          "parameters": [
-            {
-              "name": "instanceName",
-              "value": "={{ $json.body.session }}"
-            },
-            {
-              "name": "qrcode",
-              "value": "={{ true }}"
-            },
-            {
-              "name": "integration",
-              "value": "WHATSAPP-BAILEYS"
-            }
-          ]
-        },
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"instanceName\": \"{{ $json.body.session }}\",\n  \"qrcode\": true,\n  \"integration\": \"WHATSAPP-BAILEYS\",\n  \"webhook\": {\n    \"url\": \"http://host.docker.internal:5678/webhook/evolution\",\n    \"events\": [\n      \"CONNECTION_UPDATE\",\n      \"MESSAGES_UPSERT\",\n      \"SEND_MESSAGE\"\n    ]\n  }\n}",
         "options": {}
       },
       "type": "n8n-nodes-base.httpRequest",
@@ -56,7 +42,7 @@
         220,
         0
       ],
-      "id": "fd43ec20-234d-42f7-9747-5a2b5905b69c",
+      "id": "a2256bd4-c98c-45de-834f-2d0bb79916b4",
       "name": "HTTP Request"
     },
     {
@@ -67,6 +53,12 @@
               "id": "1d98f7fd-df3d-4423-99ba-97eacc657721",
               "name": "qrcode.code",
               "value": "={{ $json.qrcode.base64 }}",
+              "type": "string"
+            },
+            {
+              "id": "a46f4306-d94c-4cb3-af80-d7488c5c8342",
+              "name": "instanceId",
+              "value": "={{ $json.instance.instanceId }}",
               "type": "string"
             }
           ]
@@ -79,13 +71,13 @@
         440,
         0
       ],
-      "id": "f490c0cd-638b-44d2-acc0-c74e0e08e1b4",
+      "id": "839c64a2-96f7-4707-8a45-04cdf44a3ff7",
       "name": "Edit Fields"
     },
     {
       "parameters": {
         "respondWith": "json",
-        "responseBody": "={\n  \"qr_code\": \"{{ $json.qrcode.code }}\"\n} ",
+        "responseBody": "={\n  \"qr_code\": \"{{ $json.qrcode.code }}\",\n  \"instanceId\": \"{{ $json.instanceId }}\"\n} ",
         "options": {}
       },
       "type": "n8n-nodes-base.respondToWebhook",
@@ -94,7 +86,7 @@
         660,
         0
       ],
-      "id": "a172bb09-6e83-4b16-8869-297ab8ddae2f",
+      "id": "9ada695f-361b-49e6-819a-77110bdc2945",
       "name": "Respond to Webhook"
     },
     {
@@ -105,11 +97,43 @@
         880,
         0
       ],
-      "id": "7404f165-790d-488d-b68e-c58c08fa2f5d",
+      "id": "ee38be8c-4524-40ea-9497-96e098512dc2",
       "name": "No Operation, do nothing"
     }
   ],
-  "pinData": {},
+  "pinData": {
+    "Webhook": [
+      {
+        "json": {
+          "headers": {
+            "host": "localhost:5678",
+            "connection": "keep-alive",
+            "content-length": "27",
+            "sec-ch-ua-platform": "\"Android\"",
+            "user-agent": "Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Mobile Safari/537.36",
+            "sec-ch-ua": "\"Chromium\";v=\"134\", \"Not:A-Brand\";v=\"24\", \"Opera GX\";v=\"119\"",
+            "content-type": "application/json",
+            "sec-ch-ua-mobile": "?1",
+            "accept": "*/*",
+            "origin": "http://localhost:5173",
+            "sec-fetch-site": "same-site",
+            "sec-fetch-mode": "cors",
+            "sec-fetch-dest": "empty",
+            "referer": "http://localhost:5173/",
+            "accept-encoding": "gzip, deflate, br, zstd",
+            "accept-language": "pt-BR,pt;q=0.9,en-US;q=0.8,en;q=0.7"
+          },
+          "params": {},
+          "query": {},
+          "body": {
+            "session": "usuario_josao"
+          },
+          "webhookUrl": "http://localhost:5678/webhook-test/create-session",
+          "executionMode": "test"
+        }
+      }
+    ]
+  },
   "connections": {
     "Webhook": {
       "main": [
@@ -156,14 +180,14 @@
       ]
     }
   },
-  "active": false,
+  "active": true,
   "settings": {
     "executionOrder": "v1"
   },
-  "versionId": "9d25069b-9cf4-4237-990b-98cc2811dfcf",
+  "versionId": "680b728e-8e4a-47cd-ae2c-d388592d631c",
   "meta": {
-    "instanceId": "522fb4bd7293ffa163fc314adb8ad4383b4edfcedfc8ee46856578729c4f01ad"
+    "instanceId": "056780cb36eb08b136d30b06959331710578fac64655c750331799f79d700200"
   },
-  "id": "dj1eMpVEv7V6CqW6",
+  "id": "t4TXFRyR8n1nZxCT",
   "tags": []
 }

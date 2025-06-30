@@ -1,0 +1,99 @@
+{
+  "name": "WebHookEvolution",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "evolution",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        0,
+        0
+      ],
+      "id": "29ee0547-8a65-4c72-b510-0c907f5facb6",
+      "name": "Webhook",
+      "webhookId": "72ba61bc-d8fe-4b42-b8ad-263f918ffe29"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://192.168.208.1:5679/dispatch",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "instance",
+              "value": "={{ $json.body.instance }}"
+            },
+            {
+              "name": "event",
+              "value": "={{ $json.body.event }}"
+            },
+            {
+              "name": "data",
+              "value": "={{ $json.body.data }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        220,
+        0
+      ],
+      "id": "6ecab485-6d3f-4844-8e40-f883dcab8ad7",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        440,
+        0
+      ],
+      "id": "b8493934-c978-4ee7-b6e1-251ce974d7dd",
+      "name": "No Operation, do nothing"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "7864090a-dc14-4200-a49c-470809de5f6b",
+  "meta": {
+    "instanceId": "056780cb36eb08b136d30b06959331710578fac64655c750331799f79d700200"
+  },
+  "id": "Y3UquPDVvmWGip7P",
+  "tags": []
+}
