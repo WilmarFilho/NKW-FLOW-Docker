@@ -105,7 +105,7 @@
     {
       "parameters": {
         "promptType": "define",
-        "text": "=Você é o João, um vendedor de sorvete super gente boa e descontraído da Sorveteria Delícias Geladas. Sua missão é conversar com os clientes de forma amigável e informal, sempre com um toque divertido sobre sorvetes.\n\nA mensagem que recebi foi: \"{{ $json.recebida }}\"\nO número do cliente é: {{ $json.numero }}\n\nResponda à mensagem do cliente de forma informal e amigável. Use emojis se achar que combina! Se a pessoa estiver perguntando sobre sorvetes, sabores, promoções, ou horários, responda como se estivesse no balcão, pronto pra ajudar. Se for uma mensagem aleatória, tente puxar pro lado do sorvete de um jeito divertido.\n\nExemplos de como você pode responder:\n- \"E aí, meu rei/rainha do sorvete! Chega mais, o que manda? 🍦\"\n- \"Opa! Falou em sorvete, meus ouvidos apitam! 😋 Qual a boa?\"\n- \"A gente tem cada sabor que é de cair o queixo! Quer saber mais?\"\n\nSua resposta deve ser a fala do João, o vendedor de sorvete.",
+        "text": "=Você é o Carlos, atendente da Gráfica Coonexão. Seu papel é conversar com os clientes de forma simpática, clara e acessível — como se estivesse no balcão da gráfica. Fale como um humano de verdade: sem linguagem robótica, sem formalidade exagerada, mas também sem gírias demais. Nada de usar emojis.\n\nA mensagem recebida do cliente foi:\n\"{{ $json.recebida }}\"\nO número do cliente é: {{ $json.numero }}\n\nResponda à mensagem com educação, atenção e agilidade. Você conhece tudo sobre materiais gráficos: papel, acabamento, tamanhos, tipos de impressão, prazos, formatos de arquivo, cartões de visita, banners, panfletos, adesivos, papel timbrado, etc. Pode tirar dúvidas, sugerir soluções, explicar diferenças técnicas e até dar ideia pro cliente, sempre que fizer sentido.\n\nSe a mensagem for sobre orçamento, prazos, tipos de papel ou qualquer produto gráfico, responda como quem está acostumado a lidar com isso no dia a dia, pronto pra ajudar. Se for uma pergunta vaga ou confusa, puxe assunto com leveza e tente entender melhor o que o cliente precisa.\n\nExemplos de tom de voz que você pode usar:\n\n\"Oi! Tudo certo? Manda aí o que você precisa que te ajudo rapidinho.\"\n\n\"Beleza! Só me diz qual o tipo de material que você quer, que eu já te passo as opções.\"\n\n\"Ah, entendi! Nesse caso, a gente pode usar um papel mais firme, tipo couché 300g, com laminação fosca. Fica bem profissional.\"\n\nSua resposta deve ser a fala do Carlos, o atendente da gráfica.",
         "options": {}
       },
       "type": "@n8n/n8n-nodes-langchain.agent",
@@ -146,8 +146,8 @@
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
       "position": [
-        600,
-        120
+        620,
+        60
       ],
       "id": "b529ad42-889a-4df3-863c-17848c9de795",
       "name": "Edit Fields"
@@ -157,11 +157,86 @@
       "type": "n8n-nodes-base.noOp",
       "typeVersion": 1,
       "position": [
-        600,
-        300
+        480,
+        -200
       ],
-      "id": "938e5e5d-2cf3-4940-831c-882fefe83bcf",
-      "name": "No Operation, do nothing1"
+      "id": "b8493934-c978-4ee7-b6e1-251ce974d7dd",
+      "name": "No Operation, do nothing"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://192.168.208.1:5679/dispatch",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "instance",
+              "value": "={{ $json.body.instance }}"
+            },
+            {
+              "name": "event",
+              "value": "={{ $json.body.event }}"
+            },
+            {
+              "name": "data",
+              "value": "={{ $json.body.data }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        200,
+        -200
+      ],
+      "id": "6ecab485-6d3f-4844-8e40-f883dcab8ad7",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "evolution",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -440,
+        40
+      ],
+      "id": "29ee0547-8a65-4c72-b510-0c907f5facb6",
+      "name": "Webhook",
+      "webhookId": "72ba61bc-d8fe-4b42-b8ad-263f918ffe29"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        1760,
+        120
+      ],
+      "id": "84acd7d5-bbf5-4601-aefa-e5abfb46e645",
+      "name": "Loop Over Items"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "messagesToSend",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        1500,
+        120
+      ],
+      "id": "d16d5f48-1ab6-4c43-9531-221d9fa81f55",
+      "name": "Split Out"
     },
     {
       "parameters": {
@@ -202,10 +277,55 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.2,
       "position": [
-        280,
-        120
+        180,
+        80
       ],
-      "id": "61e3c80a-9d9e-4f10-b2cb-d2aad2d794a0",
+      "id": "6f3c4881-08bd-4b4a-a753-c085b7ae5d5f",
+      "name": "If1"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "0155550b-24db-4603-a7c4-5a756ff3c734",
+              "leftValue": "={{ $json.body.event }}",
+              "rightValue": "=connection.update",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            },
+            {
+              "id": "312a160f-6e7e-484d-8e80-5faaf3db2787",
+              "leftValue": "={{ $json.body.data.state }}",
+              "rightValue": "close",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        180,
+        720
+      ],
+      "id": "30ddb149-7530-4e6c-9866-acd6aa2bbe9e",
       "name": "If"
     },
     {
@@ -213,30 +333,22 @@
       "type": "n8n-nodes-base.noOp",
       "typeVersion": 1,
       "position": [
-        540,
-        -180
+        740,
+        720
       ],
-      "id": "b8493934-c978-4ee7-b6e1-251ce974d7dd",
-      "name": "No Operation, do nothing"
+      "id": "b25f5ba6-1ca4-42ec-973a-c40f43b3f23a",
+      "name": "No Operation, do nothing1"
     },
     {
       "parameters": {
-        "method": "POST",
-        "url": "http://192.168.208.1:5679/dispatch",
-        "sendBody": true,
-        "bodyParameters": {
+        "method": "DELETE",
+        "url": "=http://host.docker.internal:8081/instance/delete/{{ $json.body.instance }}",
+        "sendHeaders": true,
+        "headerParameters": {
           "parameters": [
             {
-              "name": "instance",
-              "value": "={{ $json.body.instance }}"
-            },
-            {
-              "name": "event",
-              "value": "={{ $json.body.event }}"
-            },
-            {
-              "name": "data",
-              "value": "={{ $json.body.data }}"
+              "name": "apikey",
+              "value": "SUA_KEY"
             }
           ]
         },
@@ -245,57 +357,47 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        280,
-        -180
+        500,
+        700
       ],
-      "id": "6ecab485-6d3f-4844-8e40-f883dcab8ad7",
-      "name": "HTTP Request"
-    },
-    {
-      "parameters": {
-        "httpMethod": "POST",
-        "path": "evolution",
-        "options": {}
-      },
-      "type": "n8n-nodes-base.webhook",
-      "typeVersion": 2,
-      "position": [
-        0,
-        0
-      ],
-      "id": "29ee0547-8a65-4c72-b510-0c907f5facb6",
-      "name": "Webhook",
-      "webhookId": "72ba61bc-d8fe-4b42-b8ad-263f918ffe29"
-    },
-    {
-      "parameters": {
-        "options": {}
-      },
-      "type": "n8n-nodes-base.splitInBatches",
-      "typeVersion": 3,
-      "position": [
-        1760,
-        120
-      ],
-      "id": "84acd7d5-bbf5-4601-aefa-e5abfb46e645",
-      "name": "Loop Over Items"
-    },
-    {
-      "parameters": {
-        "fieldToSplitOut": "messagesToSend",
-        "options": {}
-      },
-      "type": "n8n-nodes-base.splitOut",
-      "typeVersion": 1,
-      "position": [
-        1500,
-        120
-      ],
-      "id": "d16d5f48-1ab6-4c43-9531-221d9fa81f55",
-      "name": "Split Out"
+      "id": "678c7ad9-443a-4fe5-8ee1-22b56fc66906",
+      "name": "HTTP Request2"
     }
   ],
-  "pinData": {},
+  "pinData": {
+    "Webhook": [
+      {
+        "json": {
+          "headers": {
+            "content-type": "application/json",
+            "user-agent": "axios/1.7.9",
+            "content-length": "430",
+            "accept-encoding": "gzip, compress, deflate, br",
+            "host": "host.docker.internal:5678",
+            "connection": "keep-alive"
+          },
+          "params": {},
+          "query": {},
+          "body": {
+            "event": "connection.update",
+            "instance": "wilmar_josé_alves_ferreira_filho_1751484825562",
+            "data": {
+              "instance": "wilmar_josé_alves_ferreira_filho_1751484825562",
+              "state": "close",
+              "statusReason": 401
+            },
+            "destination": "http://host.docker.internal:5678/webhook-test/evolution",
+            "date_time": "2025-07-02T16:36:11.480Z",
+            "sender": "556492434104@s.whatsapp.net",
+            "server_url": "http://localhost:8080",
+            "apikey": "44D153F4-E1FF-44BB-B96D-34478AC86CF3"
+          },
+          "webhookUrl": "http://localhost:5678/webhook-test/evolution",
+          "executionMode": "test"
+        }
+      }
+    ]
+  },
   "connections": {
     "Code": {
       "main": [
@@ -363,24 +465,6 @@
         ]
       ]
     },
-    "If": {
-      "main": [
-        [
-          {
-            "node": "Edit Fields",
-            "type": "main",
-            "index": 0
-          }
-        ],
-        [
-          {
-            "node": "No Operation, do nothing1",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
     "HTTP Request": {
       "main": [
         [
@@ -396,12 +480,17 @@
       "main": [
         [
           {
-            "node": "If",
+            "node": "HTTP Request",
             "type": "main",
             "index": 0
           },
           {
-            "node": "HTTP Request",
+            "node": "If1",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "If",
             "type": "main",
             "index": 0
           }
@@ -430,13 +519,47 @@
           }
         ]
       ]
+    },
+    "If1": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        []
+      ]
+    },
+    "HTTP Request2": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     }
   },
   "active": true,
   "settings": {
     "executionOrder": "v1"
   },
-  "versionId": "a3a8f760-2ddf-427e-aa5e-626cf76fe9e0",
+  "versionId": "5eb37ff2-2d60-4ae1-91e0-f3ce2be61d3b",
   "meta": {
     "templateCredsSetupCompleted": true,
     "instanceId": "056780cb36eb08b136d30b06959331710578fac64655c750331799f79d700200"

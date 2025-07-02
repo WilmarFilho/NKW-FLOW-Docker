@@ -1,0 +1,9 @@
+Instruções para erro de não gerar QR CODE no evolutionAPI
+
+Dentro do Docker desktop entrar na imagem "lab_evolution_api" depois ir em files
+
+Editar o arquivo " evolution > .env "
+
+Editar a variável CONFIG_SESSION_PHONE_VERSION para o valor abaixo:
+
+2.3000.1023249347
