@@ -3,19 +3,6 @@
   "nodes": [
     {
       "parameters": {
-        "jsCode": "const item = items[0];\nconst fullResponse = item.json.output;\n\nconst sentences = fullResponse.split(/(?<=[.?!])\\s+|\\n\\s*\\n|\\n(?=[A-Z])/)\n                              .filter(s => s.trim() !== '');\n\nif (sentences.length === 0 && fullResponse.trim() !== '') {\n  sentences.push(fullResponse.trim());\n}\n\n// CRUCIAL: Criamos um array de OBJETOS, onde cada um tem uma chave \"text\".\nitem.json.messagesToSend = sentences.map(sentence => ({ text: sentence.trim() }));\n\n// Retorna o item único com o array dentro.\nreturn [item];"
-      },
-      "type": "n8n-nodes-base.code",
-      "typeVersion": 2,
-      "position": [
-        1260,
-        120
-      ],
-      "id": "42742ec7-0107-4797-9224-b7cfc468c773",
-      "name": "Code"
-    },
-    {
-      "parameters": {
         "sessionIdType": "customKey",
         "sessionKey": "={{ $('Edit Fields').item.json.numero }}",
         "sessionTTL": 86400,
@@ -24,8 +11,8 @@
       "type": "@n8n/n8n-nodes-langchain.memoryRedisChat",
       "typeVersion": 1.5,
       "position": [
-        1100,
-        340
+        1680,
+        140
       ],
       "id": "90c8266f-7906-43b8-bd68-40cb89a6dfb9",
       "name": "Redis Chat Memory",
@@ -35,47 +22,6 @@
           "name": "Redis account"
         }
       }
-    },
-    {
-      "parameters": {
-        "method": "POST",
-        "url": "=http://host.docker.internal:8081/message/sendText/{{ $('Edit Fields').item.json.instance }}",
-        "sendHeaders": true,
-        "headerParameters": {
-          "parameters": [
-            {
-              "name": "apikey",
-              "value": "SUA_KEY"
-            }
-          ]
-        },
-        "sendBody": true,
-        "bodyParameters": {
-          "parameters": [
-            {
-              "name": "number",
-              "value": "={{ $('Edit Fields').item.json.numero }}"
-            },
-            {
-              "name": "text",
-              "value": "={{ $json.text }}"
-            },
-            {
-              "name": "delay",
-              "value": "={{ 5000 }}"
-            }
-          ]
-        },
-        "options": {}
-      },
-      "type": "n8n-nodes-base.httpRequest",
-      "typeVersion": 4.2,
-      "position": [
-        2060,
-        120
-      ],
-      "id": "a803f2d1-f0f4-4e52-b2f9-8fd3163cba10",
-      "name": "HTTP Request1"
     },
     {
       "parameters": {
@@ -90,8 +36,8 @@
       "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
       "typeVersion": 1.2,
       "position": [
-        920,
-        340
+        1520,
+        140
       ],
       "id": "98c6e99e-a189-493e-beab-72c38dd05443",
       "name": "OpenAI Chat Model",
@@ -111,8 +57,8 @@
       "type": "@n8n/n8n-nodes-langchain.agent",
       "typeVersion": 2,
       "position": [
-        920,
-        120
+        1580,
+        -20
       ],
       "id": "55704142-f8af-465e-a572-3dfb24d52ab1",
       "name": "AI Agent"
@@ -146,22 +92,43 @@
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
       "position": [
-        620,
-        60
+        1400,
+        -20
       ],
       "id": "b529ad42-889a-4df3-863c-17848c9de795",
       "name": "Edit Fields"
     },
     {
-      "parameters": {},
-      "type": "n8n-nodes-base.noOp",
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "evolution",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -60,
+        80
+      ],
+      "id": "29ee0547-8a65-4c72-b510-0c907f5facb6",
+      "name": "Webhook",
+      "webhookId": "72ba61bc-d8fe-4b42-b8ad-263f918ffe29"
+    },
+    {
+      "parameters": {
+        "content": "SERVER NODE\n",
+        "height": 280,
+        "width": 640,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
-        480,
-        -200
+        -200,
+        -320
       ],
-      "id": "b8493934-c978-4ee7-b6e1-251ce974d7dd",
-      "name": "No Operation, do nothing"
+      "id": "42542a76-b583-4439-898c-38b264c3c823",
+      "name": "Sticky Note"
     },
     {
       "parameters": {
@@ -189,54 +156,84 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        200,
-        -200
+        -140,
+        -240
       ],
       "id": "6ecab485-6d3f-4844-8e40-f883dcab8ad7",
-      "name": "HTTP Request"
+      "name": "EnviaEventoBack"
     },
     {
-      "parameters": {
-        "httpMethod": "POST",
-        "path": "evolution",
-        "options": {}
-      },
-      "type": "n8n-nodes-base.webhook",
-      "typeVersion": 2,
-      "position": [
-        -440,
-        40
-      ],
-      "id": "29ee0547-8a65-4c72-b510-0c907f5facb6",
-      "name": "Webhook",
-      "webhookId": "72ba61bc-d8fe-4b42-b8ad-263f918ffe29"
-    },
-    {
-      "parameters": {
-        "options": {}
-      },
-      "type": "n8n-nodes-base.splitInBatches",
-      "typeVersion": 3,
-      "position": [
-        1760,
-        120
-      ],
-      "id": "84acd7d5-bbf5-4601-aefa-e5abfb46e645",
-      "name": "Loop Over Items"
-    },
-    {
-      "parameters": {
-        "fieldToSplitOut": "messagesToSend",
-        "options": {}
-      },
-      "type": "n8n-nodes-base.splitOut",
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
       "typeVersion": 1,
       "position": [
-        1500,
-        120
+        140,
+        -240
       ],
-      "id": "d16d5f48-1ab6-4c43-9531-221d9fa81f55",
-      "name": "Split Out"
+      "id": "b8493934-c978-4ee7-b6e1-251ce974d7dd",
+      "name": "FIM"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.body.event }}",
+                    "rightValue": "messages.upsert",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "ca8aeb55-9118-4e3a-b808-098782ebccd4"
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "8cb18a51-b39a-4bfe-8fb7-7a61299ec52b",
+                    "leftValue": "={{ $json.body.event }}",
+                    "rightValue": "connection.update",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        300,
+        80
+      ],
+      "id": "2c80d6ff-2835-4632-bdc4-56c3bf0f1eb5",
+      "name": "TipoEvento"
     },
     {
       "parameters": {
@@ -248,16 +245,6 @@
             "version": 2
           },
           "conditions": [
-            {
-              "id": "0155550b-24db-4603-a7c4-5a756ff3c734",
-              "leftValue": "={{ $json.body.event }}",
-              "rightValue": "messages.upsert",
-              "operator": {
-                "type": "string",
-                "operation": "equals",
-                "name": "filter.operator.equals"
-              }
-            },
             {
               "id": "2b9754dc-9aac-4235-954b-5c873d33f8fb",
               "leftValue": "={{ $json.body.data.key.fromMe }}",
@@ -277,11 +264,11 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.2,
       "position": [
-        180,
-        80
+        1180,
+        0
       ],
       "id": "6f3c4881-08bd-4b4a-a753-c085b7ae5d5f",
-      "name": "If1"
+      "name": "TEMPORARIO"
     },
     {
       "parameters": {
@@ -322,22 +309,22 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.2,
       "position": [
-        180,
-        720
+        200,
+        1080
       ],
       "id": "30ddb149-7530-4e6c-9866-acd6aa2bbe9e",
-      "name": "If"
+      "name": "TipoConexão"
     },
     {
       "parameters": {},
       "type": "n8n-nodes-base.noOp",
       "typeVersion": 1,
       "position": [
-        740,
-        720
+        760,
+        1080
       ],
       "id": "b25f5ba6-1ca4-42ec-973a-c40f43b3f23a",
-      "name": "No Operation, do nothing1"
+      "name": "FIM1"
     },
     {
       "parameters": {
@@ -358,69 +345,408 @@
       "typeVersion": 4.2,
       "position": [
         500,
-        700
+        1080
       ],
       "id": "678c7ad9-443a-4fe5-8ee1-22b56fc66906",
+      "name": "RequisiçãoDELETE"
+    },
+    {
+      "parameters": {
+        "content": "EVENTO TIPO = CONEXÃO UPDATE\n",
+        "height": 280,
+        "width": 880,
+        "color": 6
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        140,
+        1000
+      ],
+      "id": "a5443fe4-c894-4264-ae29-0b2b90732a3e",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "content": "EVENTO TIPO = MENSAGEM UPDATE\n\n",
+        "height": 960,
+        "width": 2520,
+        "color": 6
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        500,
+        -100
+      ],
+      "id": "a9224d89-f697-448f-bf21-c536a17c67ab",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.body.data.message.conversation }}",
+                    "rightValue": "messages.upsert",
+                    "operator": {
+                      "type": "string",
+                      "operation": "exists",
+                      "singleValue": true
+                    },
+                    "id": "ca8aeb55-9118-4e3a-b808-098782ebccd4"
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "8cb18a51-b39a-4bfe-8fb7-7a61299ec52b",
+                    "leftValue": "={{ $json.body.data.message.audioMessage.mimetype }}",
+                    "rightValue": "=audio/ogg; codecs=opus",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "d732251d-86d1-44d6-8ce2-ee673480e2d4",
+                    "leftValue": "={{ $json.body.data.message.imageMessage.mimetype }}",
+                    "rightValue": "image/jpeg",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        540,
+        60
+      ],
+      "id": "3ef68e38-55ce-4ffd-a346-ac58566ec73d",
+      "name": "TipoMensagem"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "2b9754dc-9aac-4235-954b-5c873d33f8fb",
+              "leftValue": "={{ $json.body.data.key.fromMe }}",
+              "rightValue": "=true",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1180,
+        380
+      ],
+      "id": "aac707dc-7315-4fa7-95d8-c981ebc2dfde",
+      "name": "TEMPORARIO1"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "2b9754dc-9aac-4235-954b-5c873d33f8fb",
+              "leftValue": "={{ $json.body.data.key.fromMe }}",
+              "rightValue": "=true",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1180,
+        620
+      ],
+      "id": "22a4cd7d-2e66-4f2c-a0f3-567bab45bd59",
+      "name": "TEMPORARIO2"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=http://host.docker.internal:8081/message/sendText/{{ $json.body.instance }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "apikey",
+              "value": "SUA_KEY"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "number",
+              "value": "={{ $json.body.data.key.remoteJid.replaceAll('@s.whatsapp.net', '') }}"
+            },
+            {
+              "name": "text",
+              "value": "CHEGOU AUDIO"
+            },
+            {
+              "name": "delay",
+              "value": "={{ 100 }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1460,
+        380
+      ],
+      "id": "fed25b71-7d36-4a40-b9d1-bb8025de8871",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=http://host.docker.internal:8081/message/sendText/{{ $json.body.instance }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "apikey",
+              "value": "SUA_KEY"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "number",
+              "value": "={{ $json.body.data.key.remoteJid.replaceAll('@s.whatsapp.net', '') }}"
+            },
+            {
+              "name": "text",
+              "value": "CHEGOU IMAGEM"
+            },
+            {
+              "name": "delay",
+              "value": "={{ 100 }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1460,
+        620
+      ],
+      "id": "0b046dd4-0ec7-4c54-8ed1-56fc6084b1fc",
       "name": "HTTP Request2"
+    },
+    {
+      "parameters": {
+        "content": "Mensagem de texto\n",
+        "height": 360,
+        "width": 1700
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1100,
+        -80
+      ],
+      "id": "9eaaf0c8-1ff3-4d04-8819-c69622463ec5",
+      "name": "Sticky Note3"
+    },
+    {
+      "parameters": {
+        "content": "Mensagem de audio\n",
+        "height": 240,
+        "width": 1700
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1100,
+        300
+      ],
+      "id": "dc4db505-4137-4362-b92c-9f8dfd938405",
+      "name": "Sticky Note4"
+    },
+    {
+      "parameters": {
+        "content": "Mensagem de imagem\n\n",
+        "height": 240,
+        "width": 1700
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1100,
+        560
+      ],
+      "id": "e9435efc-f26f-48c7-8340-ef09f75ca330",
+      "name": "Sticky Note5"
+    },
+    {
+      "parameters": {
+        "jsCode": "const item = items[0];\nconst fullResponse = item.json.output;\n\nconst sentences = fullResponse.split(/(?<=[.?!])\\s+|\\n\\s*\\n|\\n(?=[A-Z])/)\n                              .filter(s => s.trim() !== '');\n\nif (sentences.length === 0 && fullResponse.trim() !== '') {\n  sentences.push(fullResponse.trim());\n}\n\n// CRUCIAL: Criamos um array de OBJETOS, onde cada um tem uma chave \"text\".\nitem.json.messagesToSend = sentences.map(sentence => ({ text: sentence.trim() }));\n\n// Retorna o item único com o array dentro.\nreturn [item];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1900,
+        -20
+      ],
+      "id": "42742ec7-0107-4797-9224-b7cfc468c773",
+      "name": "DivideMensagem"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "messagesToSend",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        2080,
+        -20
+      ],
+      "id": "d16d5f48-1ab6-4c43-9531-221d9fa81f55",
+      "name": "SplitaEmItens"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        2280,
+        -20
+      ],
+      "id": "84acd7d5-bbf5-4601-aefa-e5abfb46e645",
+      "name": "RodaTodasMSG"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=http://host.docker.internal:8081/message/sendText/{{ $('Edit Fields').item.json.instance }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "apikey",
+              "value": "SUA_KEY"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "number",
+              "value": "={{ $('Edit Fields').item.json.numero }}"
+            },
+            {
+              "name": "text",
+              "value": "={{ $json.text }}"
+            },
+            {
+              "name": "delay",
+              "value": "={{ 5000 }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2520,
+        -20
+      ],
+      "id": "a803f2d1-f0f4-4e52-b2f9-8fd3163cba10",
+      "name": "RequisiçãoEnviaMSG"
     }
   ],
-  "pinData": {
-    "Webhook": [
-      {
-        "json": {
-          "headers": {
-            "content-type": "application/json",
-            "user-agent": "axios/1.7.9",
-            "content-length": "430",
-            "accept-encoding": "gzip, compress, deflate, br",
-            "host": "host.docker.internal:5678",
-            "connection": "keep-alive"
-          },
-          "params": {},
-          "query": {},
-          "body": {
-            "event": "connection.update",
-            "instance": "wilmar_josé_alves_ferreira_filho_1751484825562",
-            "data": {
-              "instance": "wilmar_josé_alves_ferreira_filho_1751484825562",
-              "state": "close",
-              "statusReason": 401
-            },
-            "destination": "http://host.docker.internal:5678/webhook-test/evolution",
-            "date_time": "2025-07-02T16:36:11.480Z",
-            "sender": "556492434104@s.whatsapp.net",
-            "server_url": "http://localhost:8080",
-            "apikey": "44D153F4-E1FF-44BB-B96D-34478AC86CF3"
-          },
-          "webhookUrl": "http://localhost:5678/webhook-test/evolution",
-          "executionMode": "test"
-        }
-      }
-    ]
-  },
+  "pinData": {},
   "connections": {
-    "Code": {
-      "main": [
-        [
-          {
-            "node": "Split Out",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "HTTP Request1": {
-      "main": [
-        [
-          {
-            "node": "Loop Over Items",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
     "Redis Chat Memory": {
       "ai_memory": [
         [
@@ -436,7 +762,7 @@
       "main": [
         [
           {
-            "node": "Code",
+            "node": "DivideMensagem",
             "type": "main",
             "index": 0
           }
@@ -465,62 +791,34 @@
         ]
       ]
     },
-    "HTTP Request": {
-      "main": [
-        [
-          {
-            "node": "No Operation, do nothing",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
     "Webhook": {
       "main": [
         [
           {
-            "node": "HTTP Request",
+            "node": "EnviaEventoBack",
             "type": "main",
             "index": 0
           },
           {
-            "node": "If1",
-            "type": "main",
-            "index": 0
-          },
-          {
-            "node": "If",
+            "node": "TipoEvento",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "Loop Over Items": {
-      "main": [
-        [],
-        [
-          {
-            "node": "HTTP Request1",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Split Out": {
+    "EnviaEventoBack": {
       "main": [
         [
           {
-            "node": "Loop Over Items",
+            "node": "FIM",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "If1": {
+    "TEMPORARIO": {
       "main": [
         [
           {
@@ -532,22 +830,132 @@
         []
       ]
     },
-    "HTTP Request2": {
+    "TipoEvento": {
       "main": [
         [
           {
-            "node": "No Operation, do nothing1",
+            "node": "TipoMensagem",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "TipoConexão",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "If": {
+    "TipoConexão": {
+      "main": [
+        [
+          {
+            "node": "RequisiçãoDELETE",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "RequisiçãoDELETE": {
+      "main": [
+        [
+          {
+            "node": "FIM1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "TipoMensagem": {
+      "main": [
+        [
+          {
+            "node": "TEMPORARIO",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "TEMPORARIO1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "TEMPORARIO2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "TEMPORARIO1": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "TEMPORARIO2": {
       "main": [
         [
           {
             "node": "HTTP Request2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "DivideMensagem": {
+      "main": [
+        [
+          {
+            "node": "SplitaEmItens",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "SplitaEmItens": {
+      "main": [
+        [
+          {
+            "node": "RodaTodasMSG",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "RodaTodasMSG": {
+      "main": [
+        [],
+        [
+          {
+            "node": "RequisiçãoEnviaMSG",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "RequisiçãoEnviaMSG": {
+      "main": [
+        [
+          {
+            "node": "RodaTodasMSG",
             "type": "main",
             "index": 0
           }
@@ -559,7 +967,7 @@
   "settings": {
     "executionOrder": "v1"
   },
-  "versionId": "5eb37ff2-2d60-4ae1-91e0-f3ce2be61d3b",
+  "versionId": "39fb5bb3-383a-45d8-b74a-963603adf4c7",
   "meta": {
     "templateCredsSetupCompleted": true,
     "instanceId": "056780cb36eb08b136d30b06959331710578fac64655c750331799f79d700200"

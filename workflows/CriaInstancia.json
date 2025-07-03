@@ -20,33 +20,6 @@
     },
     {
       "parameters": {
-        "method": "POST",
-        "url": "http://host.docker.internal:8081/instance/create",
-        "sendHeaders": true,
-        "headerParameters": {
-          "parameters": [
-            {
-              "name": "apikey",
-              "value": "SUA_KEY"
-            }
-          ]
-        },
-        "sendBody": true,
-        "specifyBody": "json",
-        "jsonBody": "={\n  \"instanceName\": \"{{ $json.body.session }}\",\n  \"qrcode\": true,\n  \"integration\": \"WHATSAPP-BAILEYS\",\n  \"webhook\": {\n    \"url\": \"http://host.docker.internal:5678/webhook/evolution\",\n    \"events\": [\n      \"CONNECTION_UPDATE\",\n      \"MESSAGES_UPSERT\",\n      \"SEND_MESSAGE\"\n    ]\n  }\n}",
-        "options": {}
-      },
-      "type": "n8n-nodes-base.httpRequest",
-      "typeVersion": 4.2,
-      "position": [
-        220,
-        0
-      ],
-      "id": "a2256bd4-c98c-45de-834f-2d0bb79916b4",
-      "name": "HTTP Request"
-    },
-    {
-      "parameters": {
         "assignments": {
           "assignments": [
             {
@@ -98,7 +71,49 @@
         0
       ],
       "id": "ee38be8c-4524-40ea-9497-96e098512dc2",
-      "name": "No Operation, do nothing"
+      "name": "FIM"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://host.docker.internal:8081/instance/create",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "apikey",
+              "value": "SUA_KEY"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"instanceName\": \"{{ $json.body.session }}\",\n  \"qrcode\": true,\n  \"integration\": \"WHATSAPP-BAILEYS\",\n  \"webhook\": {\n    \"url\": \"http://host.docker.internal:5678/webhook/evolution\",\n    \"events\": [\n      \"CONNECTION_UPDATE\",\n      \"MESSAGES_UPSERT\",\n      \"SEND_MESSAGE\"\n    ]\n  }\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        220,
+        0
+      ],
+      "id": "a2256bd4-c98c-45de-834f-2d0bb79916b4",
+      "name": "RequisiçãoEVOLUTION"
+    },
+    {
+      "parameters": {
+        "content": "## Recebe do BackEnd\n**Cria instância e adiciona webhook ( Workflow WebHookEvolution )\n**Esse segundo workflow processa eventos e envia para o BackEnd que envia de novo para o FrontEnd",
+        "height": 420,
+        "width": 1400
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -180,
+        -140
+      ],
+      "id": "947befd7-b533-430d-bc35-63175c6f1434",
+      "name": "Sticky Note"
     }
   ],
   "pinData": {
@@ -139,18 +154,7 @@
       "main": [
         [
           {
-            "node": "HTTP Request",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "HTTP Request": {
-      "main": [
-        [
-          {
-            "node": "Edit Fields",
+            "node": "RequisiçãoEVOLUTION",
             "type": "main",
             "index": 0
           }
@@ -172,7 +176,18 @@
       "main": [
         [
           {
-            "node": "No Operation, do nothing",
+            "node": "FIM",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "RequisiçãoEVOLUTION": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
             "type": "main",
             "index": 0
           }
@@ -184,7 +199,7 @@
   "settings": {
     "executionOrder": "v1"
   },
-  "versionId": "680b728e-8e4a-47cd-ae2c-d388592d631c",
+  "versionId": "1f51bfc0-2410-4363-a324-3b716f01606b",
   "meta": {
     "instanceId": "056780cb36eb08b136d30b06959331710578fac64655c750331799f79d700200"
   },
