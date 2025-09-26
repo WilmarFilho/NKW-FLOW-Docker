@@ -49,6 +49,10 @@ services:
       # Boa prática: definir o fuso horário
       - TZ=America/Sao_Paulo
 
+  
+
+      
+
 volumes:
   lab_evolution_instances:
   pg_data:
@@ -57,3 +61,7 @@ volumes:
 networks:
   lab_evolution:
     driver: bridge
+
+
+
+

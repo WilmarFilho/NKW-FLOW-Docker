@@ -7,3 +7,32 @@ Editar o arquivo " evolution > .env "
 Editar a variável CONFIG_SESSION_PHONE_VERSION para o valor abaixo:
 
 2.3000.1023249347
+
+
+
+
+
+
+docker exec -it lab_evolution_api /bin/bash
+
+cd ../
+
+cd evolution
+
+vi .env
+
+
+
+Para editar:
+
+Pressione i para entrar no modo de inserção.
+
+Faça suas alterações.
+
+Pressione ESC.
+
+Digite :wq e pressione Enter para salvar e sair.
+
+
+
+docker restart lab_evolution_api

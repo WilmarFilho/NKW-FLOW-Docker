@@ -1,0 +1,389 @@
+{
+  "name": "WebhookEvolution",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "evolution",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        368,
+        400
+      ],
+      "id": "70859bc0-2893-4573-b873-3ea6814719d6",
+      "name": "Webhook",
+      "webhookId": "72ba61bc-d8fe-4b42-b8ad-263f918ffe29"
+    },
+    {
+      "parameters": {
+        "content": "SERVER NODE\n",
+        "height": 280,
+        "width": 880,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "9dcad893-c0fb-4a88-8a7e-86ab0fd9ec56",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://app.nkwflow.com/api/events/dispatch",
+        "sendHeaders": true,
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "connection",
+              "value": "={{ $json.body.instance }}"
+            },
+            {
+              "name": "event",
+              "value": "={{ $json.body.event }}"
+            },
+            {
+              "name": "data",
+              "value": "={{ $json.body.data }}"
+            }
+          ]
+        },
+        "options": {
+          "timeout": 8000
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        80,
+        80
+      ],
+      "id": "78e2163a-11b7-421d-943a-59cd58620f41",
+      "name": "EnviaEventoBack"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        368,
+        80
+      ],
+      "id": "5d1a6633-9ed0-4430-bdec-e612bdf01b99",
+      "name": "FIM"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.body.event }}",
+                    "rightValue": "messages.upsert",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "ca8aeb55-9118-4e3a-b808-098782ebccd4"
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "8cb18a51-b39a-4bfe-8fb7-7a61299ec52b",
+                    "leftValue": "={{ $json.body.event }}",
+                    "rightValue": "connection.update",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        720,
+        400
+      ],
+      "id": "c3387587-7776-4e0a-9abe-282eabef5f0e",
+      "name": "TipoEvento"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "0155550b-24db-4603-a7c4-5a756ff3c734",
+              "leftValue": "={{ $json.body.event }}",
+              "rightValue": "=connection.update",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            },
+            {
+              "id": "312a160f-6e7e-484d-8e80-5faaf3db2787",
+              "leftValue": "={{ $json.body.data.state }}",
+              "rightValue": "close",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        80,
+        880
+      ],
+      "id": "04e02865-57f8-4db5-acb2-e3f29abca617",
+      "name": "TipoConexão"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        640,
+        880
+      ],
+      "id": "e3db6c99-a26b-402a-9c1c-cdd9c8d5a9c2",
+      "name": "FIM1"
+    },
+    {
+      "parameters": {
+        "content": "EVENTO TIPO = CONEXÃO UPDATE\n",
+        "height": 280,
+        "width": 880,
+        "color": 6
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        0,
+        784
+      ],
+      "id": "080fc05d-2fd8-43c4-946f-7a097fccf827",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "content": "EVENTO TIPO = MENSAGEM UPDATE\n\n",
+        "height": 1060,
+        "width": 3220,
+        "color": 6
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        928,
+        0
+      ],
+      "id": "3a4b8ab3-5011-4d86-8eb0-c91661982194",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "method": "DELETE",
+        "url": "=https://evolution.nkwflow.com/instance/delete/{{ $json.body.instance }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "apikey",
+              "value": "SUA_KEY"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        384,
+        880
+      ],
+      "id": "c2234c03-8ed7-4560-a457-209214253e48",
+      "name": "RequestDELETE"
+    }
+  ],
+  "pinData": {
+    "Webhook": [
+      {
+        "json": {
+          "headers": {
+            "content-type": "application/json",
+            "user-agent": "axios/1.7.9",
+            "content-length": "1422",
+            "accept-encoding": "gzip, compress, deflate, br",
+            "host": "host.docker.internal:5678",
+            "connection": "keep-alive"
+          },
+          "params": {},
+          "query": {},
+          "body": {
+            "event": "messages.upsert",
+            "instance": "2b37a6b1-cf3e-421b-8aea-6b81566ed587",
+            "data": {
+              "key": {
+                "remoteJid": "556492434104@s.whatsapp.net",
+                "fromMe": true,
+                "id": "3EB0553261C98D19AE443E"
+              },
+              "pushName": "Wilmar Filho",
+              "status": "SERVER_ACK",
+              "message": {
+                "documentMessage": {
+                  "url": "https://mmg.whatsapp.net/v/t62.7119-24/549605144_716282714776368_2425927258400354093_n.enc?ccb=11-4&oh=01_Q5Aa2gEGmrO5JkAR496RbA8QyjwYoJI-tQQDGNYIiuieyj17IA&oe=68F0D00C&_nc_sid=5e03e0&mms3=true",
+                  "mimetype": "audio/ogg",
+                  "title": "mesa de patologia (online-audio-converter.com).ogg",
+                  "fileSha256": "IQ/qorCdyiZWvDoLZ+wBojAkQyQPfatXy2wgMWwNnU4=",
+                  "fileLength": "19444493",
+                  "mediaKey": "H1o9xCNaHNtQQUe7gdqtja04nIg3NXMcecJOXQOoPoo=",
+                  "fileName": "mesa de patologia (online-audio-converter.com).ogg",
+                  "fileEncSha256": "Zu7CIqeaNhN1lMcLD9AJQTiYs0hNk1PoTEInhhpKWNg=",
+                  "directPath": "/v/t62.7119-24/549605144_716282714776368_2425927258400354093_n.enc?ccb=11-4&oh=01_Q5Aa2gEGmrO5JkAR496RbA8QyjwYoJI-tQQDGNYIiuieyj17IA&oe=68F0D00C&_nc_sid=5e03e0",
+                  "mediaKeyTimestamp": "1758022761",
+                  "contactVcard": false
+                }
+              },
+              "contextInfo": null,
+              "messageType": "documentMessage",
+              "messageTimestamp": 1758023446,
+              "instanceId": "d1af31ad-a6a0-4d16-863f-1475bb2a7b60",
+              "source": "web"
+            },
+            "destination": "http://host.docker.internal:5678/webhook/evolution",
+            "date_time": "2025-09-16T08:50:47.234Z",
+            "sender": "556492434104@s.whatsapp.net",
+            "server_url": "http://localhost:8080",
+            "apikey": "EA93C007-8A32-4661-A9AF-E36A367F502B"
+          },
+          "webhookUrl": "http://localhost:5678/webhook/evolution",
+          "executionMode": "production"
+        }
+      }
+    ]
+  },
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "TipoEvento",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "EnviaEventoBack",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "EnviaEventoBack": {
+      "main": [
+        [
+          {
+            "node": "FIM",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "TipoEvento": {
+      "main": [
+        [],
+        [
+          {
+            "node": "TipoConexão",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "TipoConexão": {
+      "main": [
+        [
+          {
+            "node": "RequestDELETE",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "RequestDELETE": {
+      "main": [
+        [
+          {
+            "node": "FIM1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "1b31e2b0-1102-46e1-befc-d6d1b1ad4b9f",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "97893750eb83bbe925298a7ba078ab9ba3c8f82fc6bca048d44d332f02f4fdcf"
+  },
+  "id": "d7kDjEzWo0VJRii6",
+  "tags": []
+}
